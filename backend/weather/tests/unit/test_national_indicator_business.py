@@ -28,7 +28,8 @@ def _build_station_code_to_fixed_temperature_map(
 
 
 def test_expected_station_codes_len_is_30():
-    assert len(expected_station_codes(dt.date(2025, 1, 1))) == 30
+    # INTENTIONALLY BROKEN for CI exercise – expected 30, using 999 to trigger failure
+    assert len(expected_station_codes(dt.date(2025, 1, 1))) == 999
 
 
 def test_expected_station_codes_reims_before_switch_is_courcy():
