@@ -12,7 +12,7 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 
 ## 1. Code Quality
 
-### ✅ Ce qui existe
+### Ce qui existe
 
 - **Ruff** configuré (lint + format) avec règles E, W, F, I, B, C4, UP, DJ — `backend/pyproject.toml`
 - **ESLint + Prettier** frontend — `frontend/eslint.config.mjs`
@@ -22,26 +22,26 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 - **Lock files** (uv.lock, package-lock.json)
 - **CI pre-commit** : `.github/workflows/pre-commit.yaml`
 
-### ❌ Ce qui manque
+### Ce qui manque
 
-| Manque                                 | Impact                           | Priorité  |
-| -------------------------------------- | -------------------------------- | --------- |
-| Type checking Python (mypy/pyright)    | Bugs runtime non détectés        | 🟡 Moyen  |
-| Métriques de complexité (McCabe/radon) | Dette technique invisible        | 🟢 Faible |
-| Dependabot / audit deps                | Vulnérabilités invisibles        | 🟡 Moyen  |
-| Bandit (scanner sécurité Python)       | Failles de sécurité dans le code | 🟡 Moyen  |
+| Manque                                 | Impact                           | Priorité |
+| -------------------------------------- | -------------------------------- | -------- |
+| Type checking Python (mypy/pyright)    | Bugs runtime non détectés        | Moyen    |
+| Métriques de complexité (McCabe/radon) | Dette technique invisible        | Faible   |
+| Dependabot / audit deps                | Vulnérabilités invisibles        | Moyen    |
+| Bandit (scanner sécurité Python)       | Failles de sécurité dans le code | Moyen    |
 
-### 🔧 Manuel vs Automatisé
+### Manuel vs Automatisé
 
-| Tâche             | État                                     |
-| ----------------- | ---------------------------------------- |
-| Linting Python    | ✅ Automatisé (pre-commit + CI)          |
-| Formatting Python | ✅ Automatisé (pre-commit + CI)          |
-| Linting Frontend  | ✅ Automatisé (pre-commit via npm check) |
-| Type checking     | ❌ Manuel (non configuré)                |
-| Audit dépendances | ❌ Manuel (pas de Dependabot/safety)     |
+| Tâche             | État                                  |
+| ----------------- | ------------------------------------- |
+| Linting Python    | Automatisé (pre-commit + CI)          |
+| Formatting Python | Automatisé (pre-commit + CI)          |
+| Linting Frontend  | Automatisé (pre-commit via npm check) |
+| Type checking     | Manuel (non configuré)                |
+| Audit dépendances | Manuel (pas de Dependabot/safety)     |
 
-### ⚠️ Points de défaillance
+### Points de défaillance
 
 - Absence de type checking → bugs runtime non détectés
 - Pas de vérification de vulnérabilités dans les dépendances
@@ -51,7 +51,7 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 
 ## 2. Testing
 
-### ✅ Ce qui existe
+### Ce qui existe
 
 - **7 fichiers de test backend** (5 unit, 2 intégration) — `backend/weather/tests/`
 - **pytest + pytest-django + pytest-cov** installés
@@ -61,29 +61,29 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 - **@nuxt/test-utils, @vue/test-utils, @testing-library/vue** installés
 - **Playwright** dans les devDependencies
 
-### ❌ Ce qui manque
+### Ce qui manque
 
-| Manque                                | Impact                                   | Priorité    |
-| ------------------------------------- | ---------------------------------------- | ----------- |
-| 0 fichier de test frontend            | Régressions silencieuses                 | 🟠 Élevé    |
-| 0 test E2E (Playwright non configuré) | Workflows utilisateur non validés        | 🟡 Moyen    |
-| Coverage non configuré                | Pas de visibilité sur la couverture      | 🟠 Élevé    |
-| Tests NON exécutés en CI              | Merge de code cassé possible             | 🔴 Critique |
-| Tests contrat API (vs openapi.yaml)   | API peut diverger de la spec             | 🟡 Moyen    |
-| Tests de charge (k6/Locust)           | Pas de baseline de performance           | 🟢 Faible   |
-| Tests modèles Django                  | Station, Horaire, Quotidienne non testés | 🟡 Moyen    |
+| Manque                                | Impact                                   | Priorité |
+| ------------------------------------- | ---------------------------------------- | -------- |
+| 0 fichier de test frontend            | Régressions silencieuses                 | Élevé    |
+| 0 test E2E (Playwright non configuré) | Workflows utilisateur non validés        | Moyen    |
+| Coverage non configuré                | Pas de visibilité sur la couverture      | Élevé    |
+| Tests NON exécutés en CI              | Merge de code cassé possible             | Critique |
+| Tests contrat API (vs openapi.yaml)   | API peut diverger de la spec             | Moyen    |
+| Tests de charge (k6/Locust)           | Pas de baseline de performance           | Faible   |
+| Tests modèles Django                  | Station, Horaire, Quotidienne non testés | Moyen    |
 
-### 🔧 Manuel vs Automatisé
+### Manuel vs Automatisé
 
-| Tâche          | État                                         |
-| -------------- | -------------------------------------------- |
-| Tests backend  | ❌ Manuel (`uv run pytest` local uniquement) |
-| Tests frontend | ❌ Inexistants                               |
-| Tests E2E      | ❌ Inexistants                               |
-| Coverage       | ❌ Non configuré                             |
-| Tests en CI    | ❌ Non implémenté                            |
+| Tâche          | État                                      |
+| -------------- | ----------------------------------------- |
+| Tests backend  | Manuel (`uv run pytest` local uniquement) |
+| Tests frontend | Inexistants                               |
+| Tests E2E      | Inexistants                               |
+| Coverage       | Non configuré                             |
+| Tests en CI    | Non implémenté                            |
 
-### ⚠️ Points de défaillance
+### Points de défaillance
 
 - Régressions frontend silencieuses (0% couverture)
 - Merge de code cassé possible (pas de gate CI)
@@ -94,7 +94,7 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 
 ## 3. Deployment Process
 
-### ✅ Ce qui existe
+### Ce qui existe
 
 - **Dockerfiles** backend (python:3.12-slim) et frontend (node:24-alpine, multi-stage)
 - **docker-compose.dev.yml** et **docker-compose.test.yml**
@@ -103,33 +103,33 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 - **Nginx** reverse proxy — `nginx/nginx.conf`
 - **Health checks Docker** pour TimescaleDB (pg_isready)
 
-### ❌ Ce qui manque
+### Ce qui manque
 
-| Manque                              | Impact                   | Priorité    |
-| ----------------------------------- | ------------------------ | ----------- |
-| docker-compose production dédié     | Pas de config prod       | 🟠 Élevé    |
-| Containers tournent en root         | Escalade de privilèges   | 🔴 Critique |
-| Backend Dockerfile pas multi-stage  | Image plus lourde        | 🟢 Faible   |
-| HTTPS/TLS dans nginx                | Données en clair         | 🔴 Critique |
-| Headers sécurité nginx (HSTS, CSP…) | Vulnérabilités web       | 🔴 Critique |
-| Rate limiting nginx                 | Vulnérable au DoS        | 🟠 Élevé    |
-| Tests avant déploiement             | Images cassées déployées | 🔴 Critique |
-| Health check applicatif (/health)   | Redémarrage aveugle      | 🟠 Élevé    |
-| Stratégie de rollback               | Pas de retour arrière    | 🟡 Moyen    |
+| Manque                              | Impact                   | Priorité |
+| ----------------------------------- | ------------------------ | -------- |
+| docker-compose production dédié     | Pas de config prod       | Élevé    |
+| Containers tournent en root         | Escalade de privilèges   | Critique |
+| Backend Dockerfile pas multi-stage  | Image plus lourde        | Faible   |
+| HTTPS/TLS dans nginx                | Données en clair         | Critique |
+| Headers sécurité nginx (HSTS, CSP…) | Vulnérabilités web       | Critique |
+| Rate limiting nginx                 | Vulnérable au DoS        | Élevé    |
+| Tests avant déploiement             | Images cassées déployées | Critique |
+| Health check applicatif (/health)   | Redémarrage aveugle      | Élevé    |
+| Stratégie de rollback               | Pas de retour arrière    | Moyen    |
 
-### 🔧 Manuel vs Automatisé
+### Manuel vs Automatisé
 
-| Tâche               | État                                |
-| ------------------- | ----------------------------------- |
-| Build images Docker | ✅ Automatisé (CI sur tag)          |
-| Push sur GHCR       | ✅ Automatisé                       |
-| Déploiement staging | ✅ Semi-auto (CI via Tailscale SSH) |
-| Migrations DB       | ✅ Auto (entrypoint.sh)             |
-| Tests avant deploy  | ❌ Non implémenté                   |
-| Rollback            | ❌ Manuel (pas de stratégie)        |
-| Déploiement prod    | ❌ Non défini                       |
+| Tâche               | État                             |
+| ------------------- | -------------------------------- |
+| Build images Docker | Automatisé (CI sur tag)          |
+| Push sur GHCR       | Automatisé                       |
+| Déploiement staging | Semi-auto (CI via Tailscale SSH) |
+| Migrations DB       | Auto (entrypoint.sh)             |
+| Tests avant deploy  | Non implémenté                   |
+| Rollback            | Manuel (pas de stratégie)        |
+| Déploiement prod    | Non défini                       |
 
-### ⚠️ Points de défaillance
+### Points de défaillance
 
 - Déploiement d'images cassées (pas de tests gate)
 - Containers root → escalade de privilèges possible
@@ -139,36 +139,36 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 
 ---
 
-## 4. Monitoring — ❌ Quasi-inexistant
+## 4. Monitoring — Quasi-inexistant
 
-### ✅ Ce qui existe
+### Ce qui existe
 
 - **Health check Docker** pour TimescaleDB uniquement (pg_isready)
 - **prometheus-client** dans uv.lock (dépendance indirecte, non configurée)
 
-### ❌ Ce qui manque — TOUT est absent
+### Ce qui manque — TOUT est absent
 
-| Manque                       | Impact                        | Priorité    |
-| ---------------------------- | ----------------------------- | ----------- |
-| Configuration LOGGING Django | Pas de logs applicatifs       | 🔴 Critique |
-| Logging structuré (JSON)     | Logs inexploitables           | 🔴 Critique |
-| Sentry (error tracking)      | Erreurs 500 silencieuses      | 🔴 Critique |
-| Prometheus/Grafana           | Pas de métriques              | 🟠 Élevé    |
-| Endpoint /health             | Pas de probe applicative      | 🔴 Critique |
-| Métriques (latence, erreurs) | Dégradation invisible         | 🟠 Élevé    |
-| Slow query logs              | Requêtes lentes non détectées | 🟡 Moyen    |
-| Alerting                     | Pas de notification           | 🟠 Élevé    |
+| Manque                       | Impact                        | Priorité |
+| ---------------------------- | ----------------------------- | -------- |
+| Configuration LOGGING Django | Pas de logs applicatifs       | Critique |
+| Logging structuré (JSON)     | Logs inexploitables           | Critique |
+| Sentry (error tracking)      | Erreurs 500 silencieuses      | Critique |
+| Prometheus/Grafana           | Pas de métriques              | Élevé    |
+| Endpoint /health             | Pas de probe applicative      | Critique |
+| Métriques (latence, erreurs) | Dégradation invisible         | Élevé    |
+| Slow query logs              | Requêtes lentes non détectées | Moyen    |
+| Alerting                     | Pas de notification           | Élevé    |
 
-### 🔧 Manuel vs Automatisé
+### Manuel vs Automatisé
 
-| Tâche                     | État                              |
-| ------------------------- | --------------------------------- |
-| Détection d'erreurs       | ❌ Manuel (lecture de logs bruts) |
-| Métriques performance     | ❌ Inexistant                     |
-| Alerting                  | ❌ Inexistant                     |
-| Health checks applicatifs | ❌ Inexistant                     |
+| Tâche                     | État                           |
+| ------------------------- | ------------------------------ |
+| Détection d'erreurs       | Manuel (lecture de logs bruts) |
+| Métriques performance     | Inexistant                     |
+| Alerting                  | Inexistant                     |
+| Health checks applicatifs | Inexistant                     |
 
-### ⚠️ Points de défaillance
+### Points de défaillance
 
 - **Catégorie la plus critique** : impossible de détecter des pannes
 - Dégradation de performance invisible
@@ -179,7 +179,7 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 
 ## 5. Security
 
-### ✅ Ce qui existe
+### Ce qui existe
 
 - **Django ORM** partout (protection SQL injection, pas de raw SQL)
 - **CORS restrictif** — `backend/config/settings.py`
@@ -193,32 +193,32 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 - **GitHub Secrets** pour CI (Tailscale, GITHUB_TOKEN)
 - **WhiteNoise** pour les fichiers statiques
 
-### ❌ Ce qui manque
+### Ce qui manque
 
-| Manque                                                    | Impact                      | Priorité    |
-| --------------------------------------------------------- | --------------------------- | ----------- |
-| `ALLOWED_HOSTS=*` dans .env.example racine                | Attaque Host header         | 🔴 Critique |
-| Mot de passe par défaut `infoclimat2026` dans 5+ fichiers | Accès non autorisé          | 🔴 Critique |
-| SECURE_SSL_REDIRECT                                       | Pas de redirection HTTPS    | 🔴 Critique |
-| SESSION_COOKIE_SECURE / CSRF_COOKIE_SECURE                | Cookies non sécurisés       | 🔴 Critique |
-| HSTS (SECURE_HSTS_SECONDS)                                | Pas de protection downgrade | 🟠 Élevé    |
-| Content-Security-Policy                                   | Risque XSS                  | 🟠 Élevé    |
-| Rate limiting / throttling                                | Vulnérable au DoS           | 🟠 Élevé    |
-| Bandit / pip-audit                                        | Pas de scan sécurité code   | 🟡 Moyen    |
-| Containers Docker en root                                 | Escalade de privilèges      | 🔴 Critique |
-| Django Admin sans restriction IP                          | Cible brute force           | 🟡 Moyen    |
-| CSRF_TRUSTED_ORIGINS pour production                      | CSRF en prod HTTPS          | 🟠 Élevé    |
+| Manque                                                    | Impact                      | Priorité |
+| --------------------------------------------------------- | --------------------------- | -------- |
+| `ALLOWED_HOSTS=*` dans .env.example racine                | Attaque Host header         | Critique |
+| Mot de passe par défaut `infoclimat2026` dans 5+ fichiers | Accès non autorisé          | Critique |
+| SECURE_SSL_REDIRECT                                       | Pas de redirection HTTPS    | Critique |
+| SESSION_COOKIE_SECURE / CSRF_COOKIE_SECURE                | Cookies non sécurisés       | Critique |
+| HSTS (SECURE_HSTS_SECONDS)                                | Pas de protection downgrade | Élevé    |
+| Content-Security-Policy                                   | Risque XSS                  | Élevé    |
+| Rate limiting / throttling                                | Vulnérable au DoS           | Élevé    |
+| Bandit / pip-audit                                        | Pas de scan sécurité code   | Moyen    |
+| Containers Docker en root                                 | Escalade de privilèges      | Critique |
+| Django Admin sans restriction IP                          | Cible brute force           | Moyen    |
+| CSRF_TRUSTED_ORIGINS pour production                      | CSRF en prod HTTPS          | Élevé    |
 
-### 🔧 Manuel vs Automatisé
+### Manuel vs Automatisé
 
-| Tâche                       | État              |
-| --------------------------- | ----------------- |
-| Scan de vulnérabilités code | ❌ Non implémenté |
-| Scan de dépendances         | ❌ Non implémenté |
-| Rotation des secrets        | ❌ Manuel         |
-| Audit de sécurité           | ❌ Manuel         |
+| Tâche                       | État           |
+| --------------------------- | -------------- |
+| Scan de vulnérabilités code | Non implémenté |
+| Scan de dépendances         | Non implémenté |
+| Rotation des secrets        | Manuel         |
+| Audit de sécurité           | Manuel         |
 
-### ⚠️ Points de défaillance
+### Points de défaillance
 
 - `ALLOWED_HOSTS=*` est le risque #1
 - Credentials par défaut = accès non autorisé si inchangés en prod
@@ -231,36 +231,36 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 
 ## 6. Documentation
 
-### ✅ Ce qui existe
+### Ce qui existe
 
 - **backend/README.md** complet : installation, commandes, structure, API, variables d'env, TimescaleDB
 - **Spec OpenAPI** — `backend/openapi/target-specs/openapi.yaml`
 - **Swagger UI + ReDoc** auto-générés (`/api/docs/`, `/api/redoc/`)
 - **timescaledb-env/README.md**
 
-### ❌ Ce qui manque
+### Ce qui manque
 
-| Manque                                         | Impact                      | Priorité  |
-| ---------------------------------------------- | --------------------------- | --------- |
-| Documentation d'architecture (diagrammes, ADR) | Vision technique absente    | 🟡 Moyen  |
-| CONTRIBUTING.md                                | Onboarding difficile        | 🟡 Moyen  |
-| CHANGELOG                                      | Pas de traçabilité          | 🟡 Moyen  |
-| Doc déploiement production                     | Procédure absente           | 🟠 Élevé  |
-| Runbook opérationnel                           | Pas de procédure d'incident | 🟠 Élevé  |
-| frontend/README.md détaillé                    | Template Nuxt par défaut    | 🟢 Faible |
-| Doc pipeline CI/CD                             | Non documenté               | 🟢 Faible |
+| Manque                                         | Impact                      | Priorité |
+| ---------------------------------------------- | --------------------------- | -------- |
+| Documentation d'architecture (diagrammes, ADR) | Vision technique absente    | Moyen    |
+| CONTRIBUTING.md                                | Onboarding difficile        | Moyen    |
+| CHANGELOG                                      | Pas de traçabilité          | Moyen    |
+| Doc déploiement production                     | Procédure absente           | Élevé    |
+| Runbook opérationnel                           | Pas de procédure d'incident | Élevé    |
+| frontend/README.md détaillé                    | Template Nuxt par défaut    | Faible   |
+| Doc pipeline CI/CD                             | Non documenté               | Faible   |
 
-### 🔧 Manuel vs Automatisé
+### Manuel vs Automatisé
 
-| Tâche                   | État            |
-| ----------------------- | --------------- |
-| Doc API (Swagger/ReDoc) | ✅ Auto-générée |
-| Schema OpenAPI          | ✅ Auto-généré  |
-| README maintenance      | ❌ Manuel       |
-| Changelog               | ❌ Inexistant   |
-| Doc architecture        | ❌ Inexistant   |
+| Tâche                   | État         |
+| ----------------------- | ------------ |
+| Doc API (Swagger/ReDoc) | Auto-générée |
+| Schema OpenAPI          | Auto-généré  |
+| README maintenance      | Manuel       |
+| Changelog               | Inexistant   |
+| Doc architecture        | Inexistant   |
 
-### ⚠️ Points de défaillance
+### Points de défaillance
 
 - Nouveau développeur bloqué sans guide de contribution
 - Pas de procédure d'incident documentée
@@ -271,7 +271,7 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 
 ## Top 5 — Analyse détaillée et recommandations
 
-### 🥇 #1 — Monitoring inexistant (Monitoring / Sécurité)
+### #1 — Monitoring inexistant (Monitoring / Sécurité)
 
 **Constat** : Aucun logging Django configuré, aucun error tracking, aucun endpoint `/health`, aucune métrique. En cas de panne ou d'erreur 500, personne n'est alerté et le diagnostic est impossible.
 
@@ -299,7 +299,7 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 
 ---
 
-### 🥈 #2 — Tests non exécutés en CI (Testing / Déploiement)
+### #2 — Tests non exécutés en CI (Testing / Déploiement)
 
 **Constat** : pytest existe localement mais aucun workflow GitHub Actions n'exécute les tests. Du code cassé peut être mergé et déployé en staging sans détection. Le pipeline staging build les images Docker directement sans étape de validation.
 
@@ -327,7 +327,7 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 
 ---
 
-### 🥉 #3 — Sécurité production non configurée (Sécurité / Déploiement)
+### #3 — Sécurité production non configurée (Sécurité / Déploiement)
 
 **Constat** : `ALLOWED_HOSTS=*` dans `.env.example` racine, aucun setting `SECURE_*` configuré (SSL redirect, HSTS, cookies sécurisés), nginx en HTTP uniquement sans headers de sécurité, containers Docker tournant en root. Le mot de passe par défaut `infoclimat2026` apparaît dans 5+ fichiers.
 
@@ -364,7 +364,7 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 
 ---
 
-### 4️⃣ #4 — Pas de rate limiting (Sécurité)
+### #4 — Pas de rate limiting (Sécurité)
 
 **Constat** : Aucune protection contre les abus, ni au niveau Django REST Framework (throttling), ni au niveau nginx (limit_req). L'API publique sans authentification est une cible facile pour du scraping massif ou du déni de service.
 
@@ -401,7 +401,7 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 
 ---
 
-### 5️⃣ #5 — Zéro test frontend (Testing)
+### #5 — Zéro test frontend (Testing)
 
 **Constat** : Malgré Vitest, @nuxt/test-utils, @vue/test-utils et @testing-library/vue déjà installés, aucun fichier de test n'existe. Les composables (useApiClient, useTemperature, useNationalIndicator…), le store Pinia (itnStore), et les composants sont totalement non testés. Toute régression frontend est silencieuse.
 
@@ -432,7 +432,7 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 
 ## Matrice de Priorités
 
-### 🔴 Critique — À traiter immédiatement
+### Critique — À traiter immédiatement
 
 | #   | Action                                                     | Catégorie              | Effort |
 | --- | ---------------------------------------------------------- | ---------------------- | ------ |
@@ -443,7 +443,7 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 | 5   | Containers non-root dans les Dockerfiles                   | Sécurité + Déploiement | Faible |
 | 6   | Ajouter workflow CI pour pytest (gate avant merge)         | Testing                | Faible |
 
-### 🟠 Élevé — Prochaine itération
+### Élevé — Prochaine itération
 
 | #   | Action                                         | Catégorie         | Effort |
 | --- | ---------------------------------------------- | ----------------- | ------ |
@@ -455,7 +455,7 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 | 12  | Prometheus + métriques applicatives            | Monitoring        | Moyen  |
 | 13  | Runbook opérationnel                           | Documentation     | Moyen  |
 
-### 🟡 Moyen — Planifier
+### Moyen — Planifier
 
 | #   | Action                                  | Catégorie     | Effort |
 | --- | --------------------------------------- | ------------- | ------ |
@@ -467,7 +467,7 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 | 19  | Architecture Decision Records (ADR)     | Documentation | Moyen  |
 | 20  | Ajouter Bandit au pre-commit            | Code Quality  | Faible |
 
-### 🟢 Faible — Nice to have
+### Faible — Nice to have
 
 | #   | Action                                 | Catégorie     | Effort |
 | --- | -------------------------------------- | ------------- | ------ |
