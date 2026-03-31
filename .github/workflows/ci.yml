@@ -1,0 +1,183 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+env:
+  REGISTRY: ghcr.io
+  BACKEND_IMAGE: ghcr.io/${{ github.repository_owner }}/14_valorisationdonneemeteo/backend
+  FRONTEND_IMAGE: ghcr.io/${{ github.repository_owner }}/14_valorisationdonneemeteo/frontend
+
+jobs:
+  backend:
+    name: "Backend – install / test / lint / scan / docker"
+    runs-on: ubuntu-latest
+    services:
+      timescaledb:
+        image: timescale/timescaledb:latest-pg17
+        env:
+          POSTGRES_DB: meteodb
+          POSTGRES_USER: infoclimat
+          POSTGRES_PASSWORD: infoclimat2026
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    defaults:
+      run:
+        working-directory: backend
+
+    env:
+      DJANGO_SETTINGS_MODULE: config.settings
+      DB_NAME: meteodb
+      DB_USER: infoclimat
+      DB_PASSWORD: infoclimat2026
+      DB_HOST: localhost
+      DB_PORT: "5432"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.10.0"
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies (uv sync --extra dev)
+        run: uv sync --extra dev
+
+      - name: Prepare reports directory
+        run: mkdir -p reports
+
+      - name: Run tests – pytest (JUnit + coverage)
+        run: >-
+          uv run pytest
+          --junitxml=reports/junit.xml
+          --cov=config
+          --cov=weather
+          --cov-report=xml:reports/coverage.xml
+
+      - name: Run linter – ruff check
+        run: uv run ruff check .
+
+      - name: Run formatter check – ruff format
+        run: uv run ruff format --check .
+
+      - name: Run security scan – bandit (SAST)
+        run: >-
+          uv run bandit -r config weather
+          -f json -o reports/bandit.json
+          --exit-zero
+
+      - name: Run security scan – pip-audit (SCA)
+        run: uv run pip-audit -f json -o reports/pip-audit.json
+
+      - name: Upload backend CI reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-ci-reports
+          path: backend/reports/
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push backend Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          push: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+          tags: |
+            ${{ env.BACKEND_IMAGE }}:latest
+            ${{ env.BACKEND_IMAGE }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  frontend:
+    name: "Frontend – install / test / lint / scan / docker"
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies (npm ci)
+        run: npm ci --legacy-peer-deps
+
+      - name: Prepare reports directory
+        run: mkdir -p reports
+
+      - name: Run tests – vitest (JUnit)
+        run: >-
+          npm run test:unit --
+          --reporter=default
+          --reporter=junit
+          --outputFile.junit=reports/junit.xml
+
+      - name: Run linter – eslint
+        run: npm run lint
+
+      - name: Run security scan – npm audit
+        run: npm audit --audit-level=high --json > reports/npm-audit.json || true
+        continue-on-error: true
+
+      - name: Upload frontend CI reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-ci-reports
+          path: frontend/reports/
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push frontend Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          push: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+          tags: |
+            ${{ env.FRONTEND_IMAGE }}:latest
+            ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

@@ -30,3 +30,6 @@ Thumbs.db
 # backend data
 backend/db_data/quotidienne_2024_2025.csv
 backend/db_data/station.sql
+
+# CI reports (JUnit, coverage, security scans)
+**/reports/
