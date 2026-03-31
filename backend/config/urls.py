@@ -11,6 +11,7 @@ from drf_spectacular.views import (
 )
 
 urlpatterns = [
+    path("", include("django_prometheus.urls")),
     # Admin
     path("admin/", admin.site.urls),
     # API v1
