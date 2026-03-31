@@ -13,7 +13,7 @@ env:
 
 jobs:
   backend:
-    name: "Backend – install / lint / test / scan / docker"
+    name: "Backend – install / test / lint / scan / docker"
     runs-on: ubuntu-latest
     services:
       timescaledb:
@@ -59,17 +59,38 @@ jobs:
       - name: Install dependencies (uv sync --extra dev)
         run: uv sync --extra dev
 
+      - name: Prepare reports directory
+        run: mkdir -p reports
+
+      - name: Run tests – pytest (JUnit + coverage)
+        run: >-
+          uv run pytest
+          --junitxml=reports/junit.xml
+          --cov=config
+          --cov=weather
+          --cov-report=xml:reports/coverage.xml
+
       - name: Run linter – ruff check
         run: uv run ruff check .
 
       - name: Run formatter check – ruff format
         run: uv run ruff format --check .
 
-      - name: Run tests – pytest
-        run: uv run pytest -v --tb=short
+      - name: Run security scan – bandit (SAST)
+        run: >-
+          uv run bandit -r config weather
+          -f json -o reports/bandit.json
+          --exit-zero
 
-      - name: Run security scan – pip-audit
-        run: uvx pip-audit
+      - name: Run security scan – pip-audit (SCA)
+        run: uv run pip-audit -f json -o reports/pip-audit.json
+
+      - name: Upload backend CI reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-ci-reports
+          path: backend/reports/
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -94,7 +115,7 @@ jobs:
           cache-to: type=gha,mode=max
 
   frontend:
-    name: "Frontend – install / lint / test / scan / docker"
+    name: "Frontend – install / test / lint / scan / docker"
     runs-on: ubuntu-latest
 
     defaults:
@@ -115,14 +136,28 @@ jobs:
       - name: Install dependencies (npm install)
         run: npm install
 
+      - name: Prepare reports directory
+        run: mkdir -p reports
+
+      - name: Run tests – vitest (JUnit)
+        run: >-
+          npm run test:unit --
+          --reporter=default
+          --reporter=junit
+          --outputFile.junit=reports/junit.xml
+
       - name: Run linter – eslint
         run: npm run lint
 
-      - name: Run tests – vitest
-        run: npm run test:unit
-
       - name: Run security scan – npm audit
-        run: npm audit --audit-level=high
+        run: npm audit --audit-level=high --json > reports/npm-audit.json
+
+      - name: Upload frontend CI reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-ci-reports
+          path: frontend/reports/
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

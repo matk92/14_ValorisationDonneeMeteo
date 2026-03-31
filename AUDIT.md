@@ -6,7 +6,7 @@
 
 ## Résumé
 
-Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) mais présente des lacunes critiques en **monitoring** (inexistant), **sécurité production** (pas de HTTPS, containers root, pas de rate limiting), **tests** (0 tests frontend, pas de CI), et **documentation** (partielle).
+Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit, **CI GitHub Actions** sur `.github/workflows/ci.yml` : tests backend/frontend, lint, scans, build Docker sur `main`) mais présente des lacunes critiques en **monitoring** (inexistant), **sécurité production** (pas de HTTPS, containers root, pas de rate limiting), **couverture de tests frontend encore faible**, et **documentation** (partielle).
 
 ---
 
@@ -21,6 +21,7 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 - **.editorconfig** (UTF-8, LF, 4 espaces)
 - **Lock files** (uv.lock, package-lock.json)
 - **CI pre-commit** : `.github/workflows/pre-commit.yaml`
+- **CI principale** : `.github/workflows/ci.yml` (pytest, Vitest, Ruff, ESLint, Bandit, pip-audit, npm audit, artefacts JUnit / rapports de scan, images GHCR sur `main`)
 
 ### Ce qui manque
 
@@ -65,10 +66,10 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 
 | Manque                                | Impact                                   | Priorité |
 | ------------------------------------- | ---------------------------------------- | -------- |
-| 0 fichier de test frontend            | Régressions silencieuses                 | Élevé    |
+| Peu de tests frontend                 | Régressions possibles                    | Élevé    |
 | 0 test E2E (Playwright non configuré) | Workflows utilisateur non validés        | Moyen    |
-| Coverage non configuré                | Pas de visibilité sur la couverture      | Élevé    |
-| Tests NON exécutés en CI              | Merge de code cassé possible             | Critique |
+| Coverage (seuils / dashboard)           | XML backend en CI ; pas de gate ni rapport frontend centralisé | Moyen    |
+| Couverture frontend / tests métier    | Régressions possibles malgré la CI       | Élevé    |
 | Tests contrat API (vs openapi.yaml)   | API peut diverger de la spec             | Moyen    |
 | Tests de charge (k6/Locust)           | Pas de baseline de performance           | Faible   |
 | Tests modèles Django                  | Station, Horaire, Quotidienne non testés | Moyen    |
@@ -77,16 +78,16 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 
 | Tâche          | État                                      |
 | -------------- | ----------------------------------------- |
-| Tests backend  | Manuel (`uv run pytest` local uniquement) |
-| Tests frontend | Inexistants                               |
+| Tests backend  | CI + local (`uv run pytest`)              |
+| Tests frontend | CI + local (`npm run test:unit`) ; peu de fichiers de test |
 | Tests E2E      | Inexistants                               |
-| Coverage       | Non configuré                             |
-| Tests en CI    | Non implémenté                            |
+| Coverage       | XML backend en CI ; pas de seuil bloquant |
+| Tests en CI    | Implémenté (`.github/workflows/ci.yml`)   |
 
 ### Points de défaillance
 
 - Régressions frontend silencieuses (0% couverture)
-- Merge de code cassé possible (pas de gate CI)
+- Branch protection + exigence de CI verte recommandées pour verrouiller le merge
 - API peut diverger de la spec OpenAPI sans alerte
 - Aucune baseline de performance
 
@@ -204,7 +205,7 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 | HSTS (SECURE_HSTS_SECONDS)                                | Pas de protection downgrade | Élevé    |
 | Content-Security-Policy                                   | Risque XSS                  | Élevé    |
 | Rate limiting / throttling                                | Vulnérable au DoS           | Élevé    |
-| Bandit / pip-audit                                        | Pas de scan sécurité code   | Moyen    |
+| Bandit / pip-audit                                        | Exécutés en CI (`ci.yml`)    | OK       |
 | Containers Docker en root                                 | Escalade de privilèges      | Critique |
 | Django Admin sans restriction IP                          | Cible brute force           | Moyen    |
 | CSRF_TRUSTED_ORIGINS pour production                      | CSRF en prod HTTPS          | Élevé    |
@@ -213,8 +214,8 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 
 | Tâche                       | État           |
 | --------------------------- | -------------- |
-| Scan de vulnérabilités code | Non implémenté |
-| Scan de dépendances         | Non implémenté |
+| Scan de vulnérabilités code | CI (Bandit)    |
+| Scan de dépendances         | CI (pip-audit, npm audit) |
 | Rotation des secrets        | Manuel         |
 | Audit de sécurité           | Manuel         |
 
@@ -248,7 +249,7 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 | Doc déploiement production                     | Procédure absente           | Élevé    |
 | Runbook opérationnel                           | Pas de procédure d'incident | Élevé    |
 | frontend/README.md détaillé                    | Template Nuxt par défaut    | Faible   |
-| Doc pipeline CI/CD                             | Non documenté               | Faible   |
+| Doc pipeline CI/CD                             | Voir `docs/CI.md`         | OK       |
 
 ### Manuel vs Automatisé
 
@@ -299,19 +300,19 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 
 ---
 
-### #2 — Tests non exécutés en CI (Testing / Déploiement)
+### #2 — Tests et gate avant déploiement (Testing / Déploiement)
 
-**Constat** : pytest existe localement mais aucun workflow GitHub Actions n'exécute les tests. Du code cassé peut être mergé et déployé en staging sans détection. Le pipeline staging build les images Docker directement sans étape de validation.
+**Constat** : un workflow `.github/workflows/ci.yml` exécute désormais pytest, Vitest, lint et scans sur chaque PR/push ; les images Docker sont poussées sur GHCR depuis `main`. Le déploiement staging peut encore être renforcé en exigeant un run CI vert explicite avant build ou en ajoutant des tests d’intégration supplémentaires.
 
 **Correctif court terme** :
 
-- Créer un workflow `.github/workflows/tests.yml` qui exécute `uv run pytest` sur chaque PR et push vers main
-- Ajouter une étape de test dans le workflow staging (avant le build Docker)
+- Activer les **branch protection rules** sur `main` (CI obligatoire avant merge)
+- Ajouter une étape de test dans le workflow staging (avant le build Docker) si ce n’est pas déjà aligné
 - Configurer `pytest-cov` avec un seuil minimum (ex: 60%) dans `pyproject.toml`
 
 **Solution long terme** :
 
-- Ajouter un job vitest dans le même workflow CI pour le frontend
+- Élargir les tests frontend et la couverture
 - Rendre le merge conditionné par les tests (branch protection rules GitHub)
 - Publier les rapports de coverage sur chaque PR (via `coverage-comment` ou Codecov)
 - Implémenter une matrice de tests (Python 3.12/3.13, PostgreSQL versions)
@@ -401,15 +402,15 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 
 ---
 
-### #5 — Zéro test frontend (Testing)
+### #5 — Couverture frontend insuffisante (Testing)
 
-**Constat** : Malgré Vitest, @nuxt/test-utils, @vue/test-utils et @testing-library/vue déjà installés, aucun fichier de test n'existe. Les composables (useApiClient, useTemperature, useNationalIndicator…), le store Pinia (itnStore), et les composants sont totalement non testés. Toute régression frontend est silencieuse.
+**Constat** : Vitest et les utilitaires de test sont en place et un fichier d’exemple existe, mais les composables (`useApiClient`, `useTemperature`, `useNationalIndicator…`), le store Pinia (`itnStore`) et la plupart des composants restent peu ou pas couverts. La CI exécute `test:unit` mais la surface métier n’est pas protégée.
 
 **Correctif court terme** :
 
 - Écrire des tests unitaires pour les **composables** (`useApiClient`, `useCustomDate`, `useNationalIndicator`) — ce sont les plus critiques car ils contiennent la logique métier
 - Écrire des tests pour le **store Pinia** (`itnStore`) — source de vérité de l'application
-- Configurer le script `test:unit` dans la CI (workflow tests.yml)
+- Élargir les tests frontend au-delà des exemples existants
 
 **Solution long terme** :
 
@@ -441,7 +442,7 @@ Le projet a de bonnes bases (linting, ORM sécurisé, factories, CI pre-commit) 
 | 3   | Ajouter HTTPS + headers sécurité dans nginx                | Sécurité + Déploiement | Moyen  |
 | 4   | Configurer `SECURE_*` settings Django (SSL, HSTS, cookies) | Sécurité               | Faible |
 | 5   | Containers non-root dans les Dockerfiles                   | Sécurité + Déploiement | Faible |
-| 6   | Ajouter workflow CI pour pytest (gate avant merge)         | Testing                | Faible |
+| 6   | Branch protection + seuil coverage pytest (optionnel)       | Testing                | Faible |
 
 ### Élevé — Prochaine itération
 

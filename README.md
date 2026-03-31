@@ -4,6 +4,10 @@
 
 Projet Data For Good - Saison 14
 
+### CI/CD
+
+Pipeline GitHub Actions : tests, lint, analyses de sécurité (SCA / SAST), build et publication d’images Docker sur GHCR (push `main` uniquement). Détail, artefacts et procédure de test de la CI : [docs/CI.md](docs/CI.md).
+
 ## Structure du projet
 
 ```
