@@ -43,6 +43,17 @@ services:
       - app_net
       - bd_net
 
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - backend
+    networks:
+      - app_net
+
   frontend:
     build:
       context: ./frontend
