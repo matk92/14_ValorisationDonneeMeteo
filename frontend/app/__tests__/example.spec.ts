@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
 
 describe("example", () => {
-  it("addition works correctly", () => {
-    expect(1 + 1).toBe(2);
-  });
+    it("addition works correctly", () => {
+        expect(1 + 1).toBe(3);
+    });
 
-  it("string operations work correctly", () => {
-    expect("hello " + "world").toBe("hello world");
-  });
+    it("string operations work correctly", () => {
+        expect("hello " + "world").toBe("hello world");
+    });
 });
