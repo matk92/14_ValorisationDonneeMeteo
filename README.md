@@ -8,6 +8,10 @@ Projet Data For Good - Saison 14
 
 Pipeline GitHub Actions : tests, lint, analyses de sécurité (SCA / SAST), build et publication d’images Docker sur GHCR (push `main` uniquement). Détail, artefacts et procédure de test de la CI : [docs/CI.md](docs/CI.md).
 
+### Monitoring
+
+Prometheus et Grafana sont configurés en local avec Docker Compose. Détail du lancement, des targets Prometheus et du dashboard Grafana : [docs/Prometheus.md](docs/Prometheus.md).
+
 ## Structure du projet
 
 ```
