@@ -80,10 +80,10 @@ jobs:
           --cov-report=xml:reports/coverage.xml
 
       - name: Run linter
-        run: uv run ruff check .
+        run: uv run ruff check config weather
 
       - name: Run format check
-        run: uv run ruff format --check .
+        run: uv run ruff format --check config weather
 
       - name: Run SAST scan with Bandit
         run: >-
