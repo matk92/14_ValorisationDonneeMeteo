@@ -1534,6 +1534,7 @@ dependencies = [
     { name = "drf-spectacular" },
     { name = "gunicorn" },
     { name = "numpy" },
+    { name = "pandas" },
     { name = "psycopg", extra = ["binary"] },
     { name = "whitenoise" },
 ]
@@ -1554,7 +1555,6 @@ dev = [
 notebooks = [
     { name = "jupyterlab" },
     { name = "matplotlib" },
-    { name = "pandas" },
 ]
 
 [package.metadata]
@@ -1575,7 +1575,7 @@ requires-dist = [
     { name = "jupyterlab", marker = "extra == 'notebooks'", specifier = ">=4.0" },
     { name = "matplotlib", marker = "extra == 'notebooks'", specifier = ">=3.8" },
     { name = "numpy", specifier = ">=1.26.0" },
-    { name = "pandas", marker = "extra == 'notebooks'", specifier = ">=2.0" },
+    { name = "pandas", specifier = ">=2.0" },
     { name = "pip-audit", marker = "extra == 'dev'", specifier = ">=2.7.0" },
     { name = "pre-commit", marker = "extra == 'dev'", specifier = ">=3.7.0" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.2.0" },
