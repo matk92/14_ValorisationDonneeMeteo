@@ -56,6 +56,22 @@ Sur un `push` vers `main`, elles sont publiées sur GitHub Container Registry :
 
 Le tag `<sha>` permet de retrouver précisément quelle image correspond à quel commit.
 
+### Registre personnalisé (optionnel)
+
+En plus de GHCR, le workflow peut publier les **mêmes** images sur un registre Docker privé, par ex. [registry.sector16.uk](https://registry.sector16.uk/).
+
+1. **Variable** (Settings → Secrets and variables → Actions → *Variables*) : `CUSTOM_REGISTRY_PUSH` = `true` pour activer les étapes.
+2. **Secrets** (onglet *Secrets*)  
+   - `CUSTOM_REGISTRY_USER` : utilisateur (ex. `admin`)  
+   - `CUSTOM_REGISTRY_TOKEN` : mot de passe ou token (ne jamais le committer)  
+
+Les cibles par défaut dans le workflow :
+
+- `registry.sector16.uk/14_valorisationdonneemeteo/backend:<sha|latest>`
+- `registry.sector16.uk/14_valorisationdonneemeteo/frontend:<sha|latest>`
+
+Si `CUSTOM_REGISTRY_PUSH` est absent ou différent de `true`, seul GHCR est utilisé (les contributions sans tes secrets ne cassent pas la CI).
+
 ## Test volontaire de la CI
 
 Pour vérifier que la CI détecte bien une régression :

@@ -14,6 +14,10 @@ env:
   REGISTRY: ghcr.io
   BACKEND_IMAGE: ghcr.io/${{ github.repository_owner }}/14_valorisationdonneemeteo/backend
   FRONTEND_IMAGE: ghcr.io/${{ github.repository_owner }}/14_valorisationdonneemeteo/frontend
+  # Custom registry (optional): set repo variable CUSTOM_REGISTRY_PUSH=true and secrets below
+  CUSTOM_REGISTRY: registry.sector16.uk
+  CUSTOM_BACKEND_IMAGE: registry.sector16.uk/14_valorisationdonneemeteo/backend
+  CUSTOM_FRONTEND_IMAGE: registry.sector16.uk/14_valorisationdonneemeteo/frontend
   TRIVY_IMAGE: aquasec/trivy:0.70.0
   OPENVEX_FILE: security/openvex.json
 
@@ -141,6 +145,22 @@ jobs:
           docker push "${BACKEND_IMAGE}:${GITHUB_SHA}"
           docker push "${BACKEND_IMAGE}:latest"
 
+      - name: Log in to custom container registry
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && vars.CUSTOM_REGISTRY_PUSH == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.CUSTOM_REGISTRY }}
+          username: ${{ secrets.CUSTOM_REGISTRY_USER }}
+          password: ${{ secrets.CUSTOM_REGISTRY_TOKEN }}
+
+      - name: Push backend to custom registry
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && vars.CUSTOM_REGISTRY_PUSH == 'true'
+        run: |
+          docker tag "${BACKEND_IMAGE}:${GITHUB_SHA}" "${CUSTOM_BACKEND_IMAGE}:${GITHUB_SHA}"
+          docker tag "${BACKEND_IMAGE}:${GITHUB_SHA}" "${CUSTOM_BACKEND_IMAGE}:latest"
+          docker push "${CUSTOM_BACKEND_IMAGE}:${GITHUB_SHA}"
+          docker push "${CUSTOM_BACKEND_IMAGE}:latest"
+
   frontend:
     name: Frontend - install / test / lint / scan / docker
     runs-on: ubuntu-latest
@@ -217,3 +237,19 @@ jobs:
           docker tag "${FRONTEND_IMAGE}:${GITHUB_SHA}" "${FRONTEND_IMAGE}:latest"
           docker push "${FRONTEND_IMAGE}:${GITHUB_SHA}"
           docker push "${FRONTEND_IMAGE}:latest"
+
+      - name: Log in to custom container registry
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && vars.CUSTOM_REGISTRY_PUSH == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.CUSTOM_REGISTRY }}
+          username: ${{ secrets.CUSTOM_REGISTRY_USER }}
+          password: ${{ secrets.CUSTOM_REGISTRY_TOKEN }}
+
+      - name: Push frontend to custom registry
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && vars.CUSTOM_REGISTRY_PUSH == 'true'
+        run: |
+          docker tag "${FRONTEND_IMAGE}:${GITHUB_SHA}" "${CUSTOM_FRONTEND_IMAGE}:${GITHUB_SHA}"
+          docker tag "${FRONTEND_IMAGE}:${GITHUB_SHA}" "${CUSTOM_FRONTEND_IMAGE}:latest"
+          docker push "${CUSTOM_FRONTEND_IMAGE}:${GITHUB_SHA}"
+          docker push "${CUSTOM_FRONTEND_IMAGE}:latest"
