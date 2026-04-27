@@ -68,7 +68,6 @@ expect(1 + 1).toBe(2);
 
 - le badge CI est présent en haut de `[../README.md](../README.md)` ;
 - le badge pointe vers le workflow `ci.yml` ;
-- le badge affiche le statut du bon dépôt, surtout si le rendu se fait depuis un fork.
 
 ### Rapports attendus
 
@@ -299,3 +298,4 @@ Si l’accès DHI n’est pas disponible, le livrable reste vérifiable dans le 
 - Grafana a une datasource Prometheus.
 - Grafana affiche le dashboard météo.
 - Les Dockerfiles DHI existent pour le backend et le frontend.
+
