@@ -10,7 +10,7 @@ export default defineConfig({
                 extends: true,
                 test: {
                     name: "unit",
-                    include: ["app/**/*.test.ts"],
+                    include: ["app/**/*.{test,spec}.ts"],
                     exclude: ["**/*.integration.test.ts", "**/*.e2e.test.ts"],
                     sequence: {
                         concurrent: true,

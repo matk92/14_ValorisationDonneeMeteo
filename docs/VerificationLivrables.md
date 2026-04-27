@@ -8,7 +8,7 @@ Ce document sert de checklist pour vérifier que les éléments demandés dans l
 
 À vérifier :
 
-- le fichier [`../.github/workflows/ci.yml`](../.github/workflows/ci.yml) existe ;
+- le fichier `[../.github/workflows/ci.yml](../.github/workflows/ci.yml)` existe ;
 - le workflow se lance sur `push` et `pull_request` ;
 - il contient deux jobs : backend et frontend.
 
@@ -51,24 +51,22 @@ Procédure de test volontaire :
 expect(1 + 1).toBe(3);
 ```
 
-3. Pousser la branche.
-4. Vérifier dans **Actions** que la CI échoue à l’étape des tests.
-5. Remettre le test correct :
+1. Pousser la branche.
+2. Vérifier dans **Actions** que la CI échoue à l’étape des tests.
+3. Remettre le test correct :
 
 ```ts
 expect(1 + 1).toBe(2);
 ```
 
-6. Pousser la correction.
-7. Vérifier que la CI repasse au vert.
-
-À garder pour le rendu : un lien ou une capture du run échoué, puis du run corrigé.
+1. Pousser la correction.
+2. Vérifier que la CI repasse au vert.
 
 ### Badge CI dans le README
 
 À vérifier :
 
-- le badge CI est présent en haut de [`../README.md`](../README.md) ;
+- le badge CI est présent en haut de `[../README.md](../README.md)` ;
 - le badge pointe vers le workflow `ci.yml` ;
 - le badge affiche le statut du bon dépôt, surtout si le rendu se fait depuis un fork.
 
@@ -98,7 +96,7 @@ Contenu attendu côté frontend :
 
 Contenu attendu côté VEX :
 
-- [`../security/openvex.json`](../security/openvex.json).
+- `[../security/openvex.json](../security/openvex.json)`.
 
 ### Images Docker
 
@@ -162,7 +160,7 @@ Résultat attendu :
 
 ### Configuration Prometheus
 
-Le fichier à vérifier est [`../prometheus/prometheus.yml`](../prometheus/prometheus.yml).
+Le fichier à vérifier est `[../prometheus/prometheus.yml](../prometheus/prometheus.yml)`.
 
 Il doit contenir :
 
@@ -200,7 +198,7 @@ curl http://localhost:8000/metrics
 
 ### Vérifier que Grafana démarre
 
-Grafana est déclaré dans [`../docker-compose.dev.yml`](../docker-compose.dev.yml).
+Grafana est déclaré dans `[../docker-compose.dev.yml](../docker-compose.dev.yml)`.
 
 Ouvrir :
 
@@ -215,7 +213,7 @@ Identifiants locaux :
 
 ### Datasource Prometheus
 
-La datasource est provisionnée dans [`../grafana/provisioning/datasources/prometheus.yml`](../grafana/provisioning/datasources/prometheus.yml).
+La datasource est provisionnée dans `[../grafana/provisioning/datasources/prometheus.yml](../grafana/provisioning/datasources/prometheus.yml)`.
 
 Dans Grafana :
 
@@ -227,7 +225,7 @@ Dans Grafana :
 http://prometheus:9090
 ```
 
-4. Cliquer sur **Save & test** si besoin.
+1. Cliquer sur **Save & test** si besoin.
 
 Résultat attendu :
 
@@ -235,9 +233,9 @@ Résultat attendu :
 
 ### Dashboard Grafana
 
-Le provisioning des dashboards est configuré dans [`../grafana/provisioning/dashboards/dashboards.yml`](../grafana/provisioning/dashboards/dashboards.yml).
+Le provisioning des dashboards est configuré dans `[../grafana/provisioning/dashboards/dashboards.yml](../grafana/provisioning/dashboards/dashboards.yml)`.
 
-Le dashboard est défini dans [`../grafana/dashboards/meteo-observability.json`](../grafana/dashboards/meteo-observability.json).
+Le dashboard est défini dans `[../grafana/dashboards/meteo-observability.json](../grafana/dashboards/meteo-observability.json)`.
 
 Dans Grafana :
 
@@ -257,8 +255,8 @@ Si certains graphes sont vides, générer quelques requêtes vers le backend pui
 
 Les Dockerfiles DHI sont séparés des Dockerfiles classiques :
 
-- [`../backend/Dockerfile.dhi`](../backend/Dockerfile.dhi) ;
-- [`../frontend/Dockerfile.dhi`](../frontend/Dockerfile.dhi).
+- `[../backend/Dockerfile.dhi](../backend/Dockerfile.dhi)` ;
+- `[../frontend/Dockerfile.dhi](../frontend/Dockerfile.dhi)`.
 
 Ils utilisent :
 
@@ -282,22 +280,22 @@ Si l’accès DHI n’est pas disponible, le livrable reste vérifiable dans le 
 
 ## 5. Checklist finale du rendu
 
-- [ ] Le workflow GitHub Actions `CI` existe.
-- [ ] La CI installe les dépendances.
-- [ ] La CI lance les tests.
-- [ ] La CI lance les linters.
-- [ ] La CI lance les scans de sécurité.
-- [ ] La CI build les images Docker.
-- [ ] La CI push les images uniquement sur `main`.
-- [ ] Le badge CI est présent dans le README.
-- [ ] Les rapports de tests sont disponibles en artefacts.
-- [ ] Les rapports de scans sont disponibles en artefacts.
-- [ ] Les rapports Trivy sont disponibles en artefacts.
-- [ ] Le fichier VEX existe.
-- [ ] Prometheus démarre avec Docker Compose.
-- [ ] La target `django` est `UP` dans Prometheus.
-- [ ] La target `prometheus` est `UP` dans Prometheus.
-- [ ] Grafana démarre avec Docker Compose.
-- [ ] Grafana a une datasource Prometheus.
-- [ ] Grafana affiche le dashboard météo.
-- [ ] Les Dockerfiles DHI existent pour le backend et le frontend.
+- Le workflow GitHub Actions `CI` existe.
+- La CI installe les dépendances.
+- La CI lance les tests.
+- La CI lance les linters.
+- La CI lance les scans de sécurité.
+- La CI build les images Docker.
+- La CI push les images uniquement sur `main`.
+- Le badge CI est présent dans le README.
+- Les rapports de tests sont disponibles en artefacts.
+- Les rapports de scans sont disponibles en artefacts.
+- Les rapports Trivy sont disponibles en artefacts.
+- Le fichier VEX existe.
+- Prometheus démarre avec Docker Compose.
+- La target `django` est `UP` dans Prometheus.
+- La target `prometheus` est `UP` dans Prometheus.
+- Grafana démarre avec Docker Compose.
+- Grafana a une datasource Prometheus.
+- Grafana affiche le dashboard météo.
+- Les Dockerfiles DHI existent pour le backend et le frontend.
