@@ -6,7 +6,6 @@ La publication Docker se fait uniquement par GitHub Actions, uniquement lors d�
 
 ## Étapes du pipeline
 
-
 Le workflow est séparé en deux jobs : un pour le backend Django et un pour le frontend Nuxt.
 
 1. Installation des dépendances
@@ -66,10 +65,9 @@ En plus de GHCR, le workflow peut pousser les images vers Sector16.
 **Important — hostname Docker :** l’interface web peut être [registry.sector16.uk](https://registry.sector16.uk/), mais **`docker login` et `docker push`** doivent utiliser **`reg.sector16.uk`** (aligné avec le projet ouichef). Utiliser `registry.` pour le client Docker provoque souvent des **401** alors que les identifiants sont corrects.
 
 1. Activer les étapes : **`CUSTOM_REGISTRY_PUSH` = `true` en Variable** (Settings → Actions → Variables uniquement : GitHub interdit `secrets` dans les `if:` des workflows).
-2. **Identifiants** (au choix, mêmes noms de secrets que ouiChef si tu copies la config)  
-   - soit `CUSTOM_REGISTRY_USER` + `CUSTOM_REGISTRY_TOKEN` ;  
+2. **Identifiants** (au choix, mêmes noms de secrets que ouiChef si tu copies la config)
+   - soit `CUSTOM_REGISTRY_USER` + `CUSTOM_REGISTRY_TOKEN` ;
    - soit `DOCKER_REGISTRY_USERNAME` + `DOCKER_REGISTRY_PASSWORD` (même noms que dans ouiChef).
-
 
 Les cibles dans le workflow :
 
