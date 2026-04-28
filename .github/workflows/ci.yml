@@ -16,8 +16,8 @@ env:
   FRONTEND_IMAGE: ghcr.io/${{ github.repository_owner }}/14_valorisationdonneemeteo/frontend
   # Custom registry (optional): set repo variable CUSTOM_REGISTRY_PUSH=true and secrets below
   CUSTOM_REGISTRY: registry.sector16.uk
-  CUSTOM_BACKEND_IMAGE: registry.sector16.uk/14_valorisationdonneemeteo/backend
-  CUSTOM_FRONTEND_IMAGE: registry.sector16.uk/14_valorisationdonneemeteo/frontend
+  CUSTOM_BACKEND_IMAGE: registry.sector16.uk/valorisationdonneemeteo-backend
+  CUSTOM_FRONTEND_IMAGE: registry.sector16.uk/valorisationdonneemeteo-frontend
   TRIVY_IMAGE: aquasec/trivy:0.70.0
   OPENVEX_FILE: security/openvex.json
 

@@ -65,10 +65,12 @@ En plus de GHCR, le workflow peut publier les **mêmes** images sur un registre 
    - `CUSTOM_REGISTRY_USER` : utilisateur (ex. `admin`)  
    - `CUSTOM_REGISTRY_TOKEN` : mot de passe ou token (ne jamais le committer)  
 
-Les cibles par défaut dans le workflow :
+Les cibles par défaut dans le workflow (une seule « partie » après le hostname, comme `ouichef-backend` dans l’UI) :
 
-- `registry.sector16.uk/14_valorisationdonneemeteo/backend:<sha|latest>`
-- `registry.sector16.uk/14_valorisationdonneemeteo/frontend:<sha|latest>`
+- `registry.sector16.uk/valorisationdonneemeteo-backend:<sha|latest>`
+- `registry.sector16.uk/valorisationdonneemeteo-frontend:<sha|latest>`
+
+Si une poussée est verte dans GitHub mais invisible dans l’UI : chercher aussi un chemin imbriqué à l’ancienne forme (`…/nom/projet`). Vérifier en local après `docker login registry.sector16.uk` : `docker pull registry.sector16.uk/valorisationdonneemeteo-frontend:latest`.
 
 Si `CUSTOM_REGISTRY_PUSH` est absent ou différent de `true`, seul GHCR est utilisé (les contributions sans tes secrets ne cassent pas la CI).
 
