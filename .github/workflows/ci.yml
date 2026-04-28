@@ -145,8 +145,13 @@ jobs:
           docker push "${BACKEND_IMAGE}:${GITHUB_SHA}"
           docker push "${BACKEND_IMAGE}:latest"
 
+      - name: "Custom registry (sector16): why skipped?"
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && vars.CUSTOM_REGISTRY_PUSH != 'true' && vars.CUSTOM_REGISTRY_PUSH != 'True' && vars.CUSTOM_REGISTRY_PUSH != '1'
+        run: |
+          echo "::warning title=Custom registry push skipped::Set repository variable CUSTOM_REGISTRY_PUSH to true (Settings → Actions → Variables). Add secrets CUSTOM_REGISTRY_USER and CUSTOM_REGISTRY_TOKEN. Until then, only GHCR receives images."
+
       - name: Log in to custom container registry
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && vars.CUSTOM_REGISTRY_PUSH == 'true'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && (vars.CUSTOM_REGISTRY_PUSH == 'true' || vars.CUSTOM_REGISTRY_PUSH == 'True' || vars.CUSTOM_REGISTRY_PUSH == '1')
         uses: docker/login-action@v3
         with:
           registry: ${{ env.CUSTOM_REGISTRY }}
@@ -154,8 +159,10 @@ jobs:
           password: ${{ secrets.CUSTOM_REGISTRY_TOKEN }}
 
       - name: Push backend to custom registry
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && vars.CUSTOM_REGISTRY_PUSH == 'true'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && (vars.CUSTOM_REGISTRY_PUSH == 'true' || vars.CUSTOM_REGISTRY_PUSH == 'True' || vars.CUSTOM_REGISTRY_PUSH == '1')
         run: |
+          set -eux
+          echo "Pushing custom registry images for backend…"
           docker tag "${BACKEND_IMAGE}:${GITHUB_SHA}" "${CUSTOM_BACKEND_IMAGE}:${GITHUB_SHA}"
           docker tag "${BACKEND_IMAGE}:${GITHUB_SHA}" "${CUSTOM_BACKEND_IMAGE}:latest"
           docker push "${CUSTOM_BACKEND_IMAGE}:${GITHUB_SHA}"
@@ -238,8 +245,13 @@ jobs:
           docker push "${FRONTEND_IMAGE}:${GITHUB_SHA}"
           docker push "${FRONTEND_IMAGE}:latest"
 
+      - name: "Custom registry (sector16): why skipped?"
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && vars.CUSTOM_REGISTRY_PUSH != 'true' && vars.CUSTOM_REGISTRY_PUSH != 'True' && vars.CUSTOM_REGISTRY_PUSH != '1'
+        run: |
+          echo "::warning title=Custom registry push skipped::Set repository variable CUSTOM_REGISTRY_PUSH to true (Settings → Actions → Variables). Add secrets CUSTOM_REGISTRY_USER and CUSTOM_REGISTRY_TOKEN. Until then, only GHCR receives images."
+
       - name: Log in to custom container registry
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && vars.CUSTOM_REGISTRY_PUSH == 'true'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && (vars.CUSTOM_REGISTRY_PUSH == 'true' || vars.CUSTOM_REGISTRY_PUSH == 'True' || vars.CUSTOM_REGISTRY_PUSH == '1')
         uses: docker/login-action@v3
         with:
           registry: ${{ env.CUSTOM_REGISTRY }}
@@ -247,8 +259,10 @@ jobs:
           password: ${{ secrets.CUSTOM_REGISTRY_TOKEN }}
 
       - name: Push frontend to custom registry
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && vars.CUSTOM_REGISTRY_PUSH == 'true'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && (vars.CUSTOM_REGISTRY_PUSH == 'true' || vars.CUSTOM_REGISTRY_PUSH == 'True' || vars.CUSTOM_REGISTRY_PUSH == '1')
         run: |
+          set -eux
+          echo "Pushing custom registry images for frontend…"
           docker tag "${FRONTEND_IMAGE}:${GITHUB_SHA}" "${CUSTOM_FRONTEND_IMAGE}:${GITHUB_SHA}"
           docker tag "${FRONTEND_IMAGE}:${GITHUB_SHA}" "${CUSTOM_FRONTEND_IMAGE}:latest"
           docker push "${CUSTOM_FRONTEND_IMAGE}:${GITHUB_SHA}"
