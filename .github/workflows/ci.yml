@@ -151,10 +151,9 @@ jobs:
           github.event_name == 'push' &&
           vars.CUSTOM_REGISTRY_PUSH != 'true' &&
           vars.CUSTOM_REGISTRY_PUSH != 'True' &&
-          vars.CUSTOM_REGISTRY_PUSH != '1' &&
-          secrets.CUSTOM_REGISTRY_PUSH != 'true'
+          vars.CUSTOM_REGISTRY_PUSH != '1'
         run: |
-          echo "::warning title=Custom registry push skipped::Set CUSTOM_REGISTRY_PUSH (variable or secret) to true. Add CUSTOM_REGISTRY_USER + CUSTOM_REGISTRY_TOKEN (or DOCKER_REGISTRY_USERNAME + DOCKER_REGISTRY_PASSWORD like ouiChef). Until then, only GHCR receives images."
+          echo "::warning title=Custom registry push skipped::Set repository variable CUSTOM_REGISTRY_PUSH to true (Actions → Variables; secrets cannot drive if:). Add CUSTOM_REGISTRY_USER + CUSTOM_REGISTRY_TOKEN or DOCKER_REGISTRY_USERNAME + DOCKER_REGISTRY_PASSWORD."
 
       - name: Log in to custom container registry (reg.sector16.uk)
         if: >-
@@ -162,8 +161,7 @@ jobs:
           github.event_name == 'push' &&
           (vars.CUSTOM_REGISTRY_PUSH == 'true' ||
            vars.CUSTOM_REGISTRY_PUSH == 'True' ||
-           vars.CUSTOM_REGISTRY_PUSH == '1' ||
-           secrets.CUSTOM_REGISTRY_PUSH == 'true')
+           vars.CUSTOM_REGISTRY_PUSH == '1')
         env:
           REGISTRY_HOST: ${{ env.CUSTOM_REGISTRY }}
           CUSTOM_REGISTRY_USER: ${{ secrets.CUSTOM_REGISTRY_USER }}
@@ -187,8 +185,7 @@ jobs:
           github.event_name == 'push' &&
           (vars.CUSTOM_REGISTRY_PUSH == 'true' ||
            vars.CUSTOM_REGISTRY_PUSH == 'True' ||
-           vars.CUSTOM_REGISTRY_PUSH == '1' ||
-           secrets.CUSTOM_REGISTRY_PUSH == 'true')
+           vars.CUSTOM_REGISTRY_PUSH == '1')
         run: |
           set -eux
           echo "Pushing custom registry images for backend…"
@@ -280,10 +277,9 @@ jobs:
           github.event_name == 'push' &&
           vars.CUSTOM_REGISTRY_PUSH != 'true' &&
           vars.CUSTOM_REGISTRY_PUSH != 'True' &&
-          vars.CUSTOM_REGISTRY_PUSH != '1' &&
-          secrets.CUSTOM_REGISTRY_PUSH != 'true'
+          vars.CUSTOM_REGISTRY_PUSH != '1'
         run: |
-          echo "::warning title=Custom registry push skipped::Set CUSTOM_REGISTRY_PUSH (variable or secret) to true. Add CUSTOM_REGISTRY_USER + CUSTOM_REGISTRY_TOKEN (or DOCKER_REGISTRY_USERNAME + DOCKER_REGISTRY_PASSWORD like ouiChef). Until then, only GHCR receives images."
+          echo "::warning title=Custom registry push skipped::Set repository variable CUSTOM_REGISTRY_PUSH to true (Actions → Variables; secrets cannot drive if:). Add CUSTOM_REGISTRY_USER + CUSTOM_REGISTRY_TOKEN or DOCKER_REGISTRY_USERNAME + DOCKER_REGISTRY_PASSWORD."
 
       - name: Log in to custom container registry (reg.sector16.uk)
         if: >-
@@ -291,8 +287,7 @@ jobs:
           github.event_name == 'push' &&
           (vars.CUSTOM_REGISTRY_PUSH == 'true' ||
            vars.CUSTOM_REGISTRY_PUSH == 'True' ||
-           vars.CUSTOM_REGISTRY_PUSH == '1' ||
-           secrets.CUSTOM_REGISTRY_PUSH == 'true')
+           vars.CUSTOM_REGISTRY_PUSH == '1')
         env:
           REGISTRY_HOST: ${{ env.CUSTOM_REGISTRY }}
           CUSTOM_REGISTRY_USER: ${{ secrets.CUSTOM_REGISTRY_USER }}
@@ -316,8 +311,7 @@ jobs:
           github.event_name == 'push' &&
           (vars.CUSTOM_REGISTRY_PUSH == 'true' ||
            vars.CUSTOM_REGISTRY_PUSH == 'True' ||
-           vars.CUSTOM_REGISTRY_PUSH == '1' ||
-           secrets.CUSTOM_REGISTRY_PUSH == 'true')
+           vars.CUSTOM_REGISTRY_PUSH == '1')
         run: |
           set -eux
           echo "Pushing custom registry images for frontend…"
