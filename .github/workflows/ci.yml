@@ -319,3 +319,37 @@ jobs:
           docker tag "${FRONTEND_IMAGE}:${GITHUB_SHA}" "${CUSTOM_FRONTEND_IMAGE}:latest"
           docker push "${CUSTOM_FRONTEND_IMAGE}:${GITHUB_SHA}"
           docker push "${CUSTOM_FRONTEND_IMAGE}:latest"
+
+  discord-notify:
+    name: Notify Discord
+    needs: [backend, frontend]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post CI status to Discord
+        env:
+          WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          BACKEND_RESULT: ${{ needs.backend.result }}
+          FRONTEND_RESULT: ${{ needs.frontend.result }}
+        run: |
+          if [ -z "${WEBHOOK_URL:-}" ]; then
+            echo "DISCORD_WEBHOOK_URL secret not set — skipping Discord notification."
+            exit 0
+          fi
+          REF="${{ github.ref_name }}"
+          SHA="${{ github.sha }}"
+          SHORT_SHA="${SHA:0:7}"
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          REPO="${{ github.repository }}"
+          if [ "$BACKEND_RESULT" = "success" ] && [ "$FRONTEND_RESULT" = "success" ]; then
+            COLOR=3066993
+            TITLE="CI succeeded"
+          else
+            COLOR=15158332
+            TITLE="CI failed or incomplete"
+          fi
+          MSG=$(printf "**%s** — \`%s\` · \`%s\` · \`%s\`\nBackend: **%s** · Frontend: **%s**\n%s" \
+            "$TITLE" "$REPO" "$REF" "$SHORT_SHA" "$BACKEND_RESULT" "$FRONTEND_RESULT" "$RUN_URL")
+          BODY=$(jq -nc --arg title "$TITLE" --argjson color "$COLOR" --arg msg "$MSG" \
+            '{embeds:[{title:$title,color:$color,description:$msg}]}')
+          curl -sS -X POST -H "Content-Type: application/json" -d "$BODY" "$WEBHOOK_URL"

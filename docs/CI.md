@@ -20,6 +20,8 @@ Pour le backend, la CI démarre aussi un service TimescaleDB afin de se rapproch
 
 Pour le frontend, la CI utilise Node 24, installe les dépendances avec `npm ci --legacy-peer-deps`, lance les tests Vitest, le lint ESLint, `npm audit`, puis construit l’image Docker.
 
+Un troisième job **`discord-notify`** s’exécute toujours après les deux jobs (`if: always()`), avec le résumé vert / rouge. Configure le secret **`DISCORD_WEBHOOK_URL`** avec l’URL du webhook Discord (ne jamais la committer).
+
 ## Rapports générés
 
 Les rapports sont disponibles dans l’onglet **Actions** de GitHub, sur le run concerné, section **Artifacts**.
@@ -67,6 +69,7 @@ En plus de GHCR, le workflow peut pousser les images vers Sector16.
 2. **Identifiants** (au choix, mêmes noms de secrets que ouiChef si tu copies la config)  
    - soit `CUSTOM_REGISTRY_USER` + `CUSTOM_REGISTRY_TOKEN` ;  
    - soit `DOCKER_REGISTRY_USERNAME` + `DOCKER_REGISTRY_PASSWORD` (même noms que dans ouiChef).
+
 
 Les cibles dans le workflow :
 
