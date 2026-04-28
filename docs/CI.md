@@ -59,21 +59,23 @@ Le tag `<sha>` permet de retrouver précisément quelle image correspond à quel
 
 ### Registre personnalisé (optionnel)
 
-En plus de GHCR, le workflow peut publier les **mêmes** images sur un registre Docker privé, par ex. [registry.sector16.uk](https://registry.sector16.uk/).
+En plus de GHCR, le workflow peut pousser les images vers Sector16.
 
-1. **Variable** (Settings → Secrets and variables → Actions → *Variables*) : `CUSTOM_REGISTRY_PUSH` = `true` pour activer les étapes.
-2. **Secrets** (onglet *Secrets*)  
-   - `CUSTOM_REGISTRY_USER` : utilisateur (ex. `admin`)  
-   - `CUSTOM_REGISTRY_TOKEN` : mot de passe ou token (ne jamais le committer)  
+**Important — hostname Docker :** l’interface web peut être [registry.sector16.uk](https://registry.sector16.uk/), mais **`docker login` et `docker push`** doivent utiliser **`reg.sector16.uk`** (aligné avec le projet ouichef). Utiliser `registry.` pour le client Docker provoque souvent des **401** alors que les identifiants sont corrects.
 
-Les cibles par défaut dans le workflow (une seule « partie » après le hostname, comme `ouichef-backend` dans l’UI) :
+1. Activer les étapes : `CUSTOM_REGISTRY_PUSH` = `true` en **Variable** et/ou **Secret** (comme pour le dépôt métier).
+2. **Identifiants** (au choix, mêmes noms de secrets que ouiChef si tu copies la config)  
+   - soit `CUSTOM_REGISTRY_USER` + `CUSTOM_REGISTRY_TOKEN` ;  
+   - soit `DOCKER_REGISTRY_USERNAME` + `DOCKER_REGISTRY_PASSWORD` (même noms que dans ouiChef).
 
-- `registry.sector16.uk/valorisationdonneemeteo-backend:<sha|latest>`
-- `registry.sector16.uk/valorisationdonneemeteo-frontend:<sha|latest>`
+Les cibles dans le workflow :
 
-Si une poussée est verte dans GitHub mais invisible dans l’UI : chercher aussi un chemin imbriqué à l’ancienne forme (`…/nom/projet`). Vérifier en local après `docker login registry.sector16.uk` : `docker pull registry.sector16.uk/valorisationdonneemeteo-frontend:latest`.
+- `reg.sector16.uk/valorisationdonneemeteo-backend:<sha|latest>`
+- `reg.sector16.uk/valorisationdonneemeteo-frontend:<sha|latest>`
 
-Si `CUSTOM_REGISTRY_PUSH` est absent ou différent de `true`, seul GHCR est utilisé (les contributions sans tes secrets ne cassent pas la CI).
+Test local : `docker login reg.sector16.uk` puis `docker pull reg.sector16.uk/valorisationdonneemeteo-frontend:latest`.
+
+Si le flag d’activation est absent, seul GHCR reçoit les images.
 
 ## Test volontaire de la CI
 

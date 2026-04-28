@@ -14,10 +14,10 @@ env:
   REGISTRY: ghcr.io
   BACKEND_IMAGE: ghcr.io/${{ github.repository_owner }}/14_valorisationdonneemeteo/backend
   FRONTEND_IMAGE: ghcr.io/${{ github.repository_owner }}/14_valorisationdonneemeteo/frontend
-  # Custom registry (optional): set repo variable CUSTOM_REGISTRY_PUSH=true and secrets below
-  CUSTOM_REGISTRY: registry.sector16.uk
-  CUSTOM_BACKEND_IMAGE: registry.sector16.uk/valorisationdonneemeteo-backend
-  CUSTOM_FRONTEND_IMAGE: registry.sector16.uk/valorisationdonneemeteo-frontend
+  # Sector16: Docker API host is reg.sector16.uk (same as ouiChef). Web UI may be registry.sector16.uk — do not use that host for docker login.
+  CUSTOM_REGISTRY: reg.sector16.uk
+  CUSTOM_BACKEND_IMAGE: reg.sector16.uk/valorisationdonneemeteo-backend
+  CUSTOM_FRONTEND_IMAGE: reg.sector16.uk/valorisationdonneemeteo-frontend
   TRIVY_IMAGE: aquasec/trivy:0.70.0
   OPENVEX_FILE: security/openvex.json
 
@@ -146,20 +146,49 @@ jobs:
           docker push "${BACKEND_IMAGE}:latest"
 
       - name: "Custom registry (sector16): why skipped?"
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && vars.CUSTOM_REGISTRY_PUSH != 'true' && vars.CUSTOM_REGISTRY_PUSH != 'True' && vars.CUSTOM_REGISTRY_PUSH != '1'
+        if: >-
+          github.ref == 'refs/heads/main' &&
+          github.event_name == 'push' &&
+          vars.CUSTOM_REGISTRY_PUSH != 'true' &&
+          vars.CUSTOM_REGISTRY_PUSH != 'True' &&
+          vars.CUSTOM_REGISTRY_PUSH != '1' &&
+          secrets.CUSTOM_REGISTRY_PUSH != 'true'
         run: |
-          echo "::warning title=Custom registry push skipped::Set repository variable CUSTOM_REGISTRY_PUSH to true (Settings → Actions → Variables). Add secrets CUSTOM_REGISTRY_USER and CUSTOM_REGISTRY_TOKEN. Until then, only GHCR receives images."
+          echo "::warning title=Custom registry push skipped::Set CUSTOM_REGISTRY_PUSH (variable or secret) to true. Add CUSTOM_REGISTRY_USER + CUSTOM_REGISTRY_TOKEN (or DOCKER_REGISTRY_USERNAME + DOCKER_REGISTRY_PASSWORD like ouiChef). Until then, only GHCR receives images."
 
-      - name: Log in to custom container registry
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && (vars.CUSTOM_REGISTRY_PUSH == 'true' || vars.CUSTOM_REGISTRY_PUSH == 'True' || vars.CUSTOM_REGISTRY_PUSH == '1')
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.CUSTOM_REGISTRY }}
-          username: ${{ secrets.CUSTOM_REGISTRY_USER }}
-          password: ${{ secrets.CUSTOM_REGISTRY_TOKEN }}
+      - name: Log in to custom container registry (reg.sector16.uk)
+        if: >-
+          github.ref == 'refs/heads/main' &&
+          github.event_name == 'push' &&
+          (vars.CUSTOM_REGISTRY_PUSH == 'true' ||
+           vars.CUSTOM_REGISTRY_PUSH == 'True' ||
+           vars.CUSTOM_REGISTRY_PUSH == '1' ||
+           secrets.CUSTOM_REGISTRY_PUSH == 'true')
+        env:
+          REGISTRY_HOST: ${{ env.CUSTOM_REGISTRY }}
+          CUSTOM_REGISTRY_USER: ${{ secrets.CUSTOM_REGISTRY_USER }}
+          CUSTOM_REGISTRY_TOKEN: ${{ secrets.CUSTOM_REGISTRY_TOKEN }}
+          DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -n "${CUSTOM_REGISTRY_USER:-}" ] && [ -n "${CUSTOM_REGISTRY_TOKEN:-}" ]; then
+            printf '%s' "$CUSTOM_REGISTRY_TOKEN" | docker login "$REGISTRY_HOST" -u "$CUSTOM_REGISTRY_USER" --password-stdin
+          elif [ -n "${DOCKER_REGISTRY_USERNAME:-}" ] && [ -n "${DOCKER_REGISTRY_PASSWORD:-}" ]; then
+            printf '%s' "$DOCKER_REGISTRY_PASSWORD" | docker login "$REGISTRY_HOST" -u "$DOCKER_REGISTRY_USERNAME" --password-stdin
+          else
+            echo "::error::Missing registry credentials. Set CUSTOM_REGISTRY_USER + CUSTOM_REGISTRY_TOKEN or DOCKER_REGISTRY_USERNAME + DOCKER_REGISTRY_PASSWORD."
+            exit 1
+          fi
 
       - name: Push backend to custom registry
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && (vars.CUSTOM_REGISTRY_PUSH == 'true' || vars.CUSTOM_REGISTRY_PUSH == 'True' || vars.CUSTOM_REGISTRY_PUSH == '1')
+        if: >-
+          github.ref == 'refs/heads/main' &&
+          github.event_name == 'push' &&
+          (vars.CUSTOM_REGISTRY_PUSH == 'true' ||
+           vars.CUSTOM_REGISTRY_PUSH == 'True' ||
+           vars.CUSTOM_REGISTRY_PUSH == '1' ||
+           secrets.CUSTOM_REGISTRY_PUSH == 'true')
         run: |
           set -eux
           echo "Pushing custom registry images for backend…"
@@ -246,20 +275,49 @@ jobs:
           docker push "${FRONTEND_IMAGE}:latest"
 
       - name: "Custom registry (sector16): why skipped?"
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && vars.CUSTOM_REGISTRY_PUSH != 'true' && vars.CUSTOM_REGISTRY_PUSH != 'True' && vars.CUSTOM_REGISTRY_PUSH != '1'
+        if: >-
+          github.ref == 'refs/heads/main' &&
+          github.event_name == 'push' &&
+          vars.CUSTOM_REGISTRY_PUSH != 'true' &&
+          vars.CUSTOM_REGISTRY_PUSH != 'True' &&
+          vars.CUSTOM_REGISTRY_PUSH != '1' &&
+          secrets.CUSTOM_REGISTRY_PUSH != 'true'
         run: |
-          echo "::warning title=Custom registry push skipped::Set repository variable CUSTOM_REGISTRY_PUSH to true (Settings → Actions → Variables). Add secrets CUSTOM_REGISTRY_USER and CUSTOM_REGISTRY_TOKEN. Until then, only GHCR receives images."
+          echo "::warning title=Custom registry push skipped::Set CUSTOM_REGISTRY_PUSH (variable or secret) to true. Add CUSTOM_REGISTRY_USER + CUSTOM_REGISTRY_TOKEN (or DOCKER_REGISTRY_USERNAME + DOCKER_REGISTRY_PASSWORD like ouiChef). Until then, only GHCR receives images."
 
-      - name: Log in to custom container registry
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && (vars.CUSTOM_REGISTRY_PUSH == 'true' || vars.CUSTOM_REGISTRY_PUSH == 'True' || vars.CUSTOM_REGISTRY_PUSH == '1')
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.CUSTOM_REGISTRY }}
-          username: ${{ secrets.CUSTOM_REGISTRY_USER }}
-          password: ${{ secrets.CUSTOM_REGISTRY_TOKEN }}
+      - name: Log in to custom container registry (reg.sector16.uk)
+        if: >-
+          github.ref == 'refs/heads/main' &&
+          github.event_name == 'push' &&
+          (vars.CUSTOM_REGISTRY_PUSH == 'true' ||
+           vars.CUSTOM_REGISTRY_PUSH == 'True' ||
+           vars.CUSTOM_REGISTRY_PUSH == '1' ||
+           secrets.CUSTOM_REGISTRY_PUSH == 'true')
+        env:
+          REGISTRY_HOST: ${{ env.CUSTOM_REGISTRY }}
+          CUSTOM_REGISTRY_USER: ${{ secrets.CUSTOM_REGISTRY_USER }}
+          CUSTOM_REGISTRY_TOKEN: ${{ secrets.CUSTOM_REGISTRY_TOKEN }}
+          DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -n "${CUSTOM_REGISTRY_USER:-}" ] && [ -n "${CUSTOM_REGISTRY_TOKEN:-}" ]; then
+            printf '%s' "$CUSTOM_REGISTRY_TOKEN" | docker login "$REGISTRY_HOST" -u "$CUSTOM_REGISTRY_USER" --password-stdin
+          elif [ -n "${DOCKER_REGISTRY_USERNAME:-}" ] && [ -n "${DOCKER_REGISTRY_PASSWORD:-}" ]; then
+            printf '%s' "$DOCKER_REGISTRY_PASSWORD" | docker login "$REGISTRY_HOST" -u "$DOCKER_REGISTRY_USERNAME" --password-stdin
+          else
+            echo "::error::Missing registry credentials. Set CUSTOM_REGISTRY_USER + CUSTOM_REGISTRY_TOKEN or DOCKER_REGISTRY_USERNAME + DOCKER_REGISTRY_PASSWORD."
+            exit 1
+          fi
 
       - name: Push frontend to custom registry
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && (vars.CUSTOM_REGISTRY_PUSH == 'true' || vars.CUSTOM_REGISTRY_PUSH == 'True' || vars.CUSTOM_REGISTRY_PUSH == '1')
+        if: >-
+          github.ref == 'refs/heads/main' &&
+          github.event_name == 'push' &&
+          (vars.CUSTOM_REGISTRY_PUSH == 'true' ||
+           vars.CUSTOM_REGISTRY_PUSH == 'True' ||
+           vars.CUSTOM_REGISTRY_PUSH == '1' ||
+           secrets.CUSTOM_REGISTRY_PUSH == 'true')
         run: |
           set -eux
           echo "Pushing custom registry images for frontend…"
