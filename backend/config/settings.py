@@ -31,6 +31,7 @@ MOCKED_DATA = env("MOCKED_DATA", False)
 
 # Application definition
 INSTALLED_APPS = [
+    "django.contrib.staticfiles",
     # Third-party
     "django_prometheus",
     "rest_framework",
