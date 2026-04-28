@@ -6,6 +6,7 @@ La publication Docker se fait uniquement par GitHub Actions, uniquement lors d�
 
 ## Étapes du pipeline
 
+
 Le workflow est séparé en deux jobs : un pour le backend Django et un pour le frontend Nuxt.
 
 1. Installation des dépendances
